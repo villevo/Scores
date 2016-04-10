@@ -24,9 +24,8 @@ Tietokannan PREFIXin muuttamista ei ole koodattu vaan kaikki tietokanta kyselyt 
       -Tulosten lisäämisen jälkeen formi lähettämällä poimitaan pelaajat joilla on scoret välillä 20-200 ja heidän
        ilmoittautumiset,maksut,lohkot,tulokset ymsyms. lisätään automaattisesti, lopuksi kilpailu suljetaan ja 
        tasoitukset lisätään jos radalla on Rating ja slope arvot 
-   
-5.     Supports: mobile web app capable, FullScreen-ominaisuus android/chrome-selain.
 
+5.     Supports: mobile web app capable, FullScreen-ominaisuus android/chrome-selain.
 
 
 
