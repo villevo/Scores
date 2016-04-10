@@ -25,7 +25,7 @@ Tietokannan PREFIXin muuttamista ei ole koodattu vaan kaikki tietokanta kyselyt 
        ilmoittautumiset,maksut,lohkot,tulokset ymsyms. lisätään automaattisesti, lopuksi kilpailu suljetaan ja 
        tasoitukset lisätään jos radalla on Rating ja slope arvot 
 
-
+5.     Supports: mobile web app capable, FullScreen-ominaisuus android/chrome-selain.
 
 
 TODO:
