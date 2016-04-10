@@ -65,9 +65,9 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 
 
 													<?php
-            $msg = '';
-            $set_username = "rolf";
-			$set_password = "rolf";
+        $msg = '';
+        $set_username = "test";
+	$set_password = "test";
 			
 			
             if (isset($_POST['login']) && !empty($_POST['username']) 
