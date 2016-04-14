@@ -73,12 +73,14 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 
 			$tulos = mysqli_query($link, $lause);
 			
-			//limit users 
-		if (in_array($username,$settings_normal_access)) {			
+			
 			 
-			 if(mysqli_num_rows($tulos) == 1){
+	if(mysqli_num_rows($tulos) == 1){
+		//limit users 
+		if (in_array($username,$settings_normal_access)) {
+			
 			   $right_username = $username;
-			   			   $jono = mysqli_fetch_row($tulos);
+			   $jono = mysqli_fetch_row($tulos);
 			   $hash = $jono[0];
 			   $salt = $jono[1];
 			   $passu = $jono[2];
@@ -90,13 +92,16 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 				  $right_password = crypt($password, '$2y$10$' . $salt . '$');
 			   }
 
-			}else{
+			}
+			}
+			
+			else{
 			$msg = 'Väärin meni...';
 			   $right_username = "";
 			   $right_password = "";
-			}
-			$tulos->close();
+			   
 		}
+		$tulos->close();
 	}
 		 
 
