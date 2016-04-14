@@ -731,7 +731,7 @@ echo "
 							</div>
 							<div>
 								Jos virheitä ei näy niin tulokset lisätty onnistuneesti.
-								<a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' id = 'link_kk'>
+								<a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' target='_new' id = 'link_kk'>
 								Suoralinkki leaderboardiin.</a>
 							</div>
 						</div>

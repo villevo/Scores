@@ -3,12 +3,8 @@
 
 
 
-
-   session_start();
-   
-
 //user auth
-$scores_session name = session_name("scores");
+$scores_session_name = session_name("scores");
 session_start();
 
 if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {

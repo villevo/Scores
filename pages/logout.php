@@ -1,4 +1,6 @@
 <?php
+//user logout
+$scores_session_name = session_name("scores");
 session_start();
    unset($_SESSION["valid"]);
    unset($_SESSION["username"]);

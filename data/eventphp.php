@@ -152,7 +152,7 @@ echo "
 								<a href='../pages/scores.php'> Valmiina tulosten syöttöön.</a>
 								<br>
 								<br>
-								<a href = '../../kisakone/kilpailu/$event_id'>
+								<a href = '../../kisakone/kilpailu/$event_id' target='_new'>
 								Katso kilpailu kisakoneessa</a>
 							</div>
 						</div>
