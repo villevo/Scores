@@ -4,11 +4,12 @@
 
 
 
-   ob_start();
    session_start();
    
 
 //user auth
+$scores_session name = session_name("scores");
+session_start();
 
 if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 	if (time() < $_SESSION['expire']) {		
@@ -30,35 +31,28 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 
 	<head>
 		<meta charset="utf-8">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge">
-				<meta name="viewport" content="width=device-width, initial-scale=1">
-					<meta name="description" content="">
-						<meta name="author" content="">
-							<meta name="mobile-web-app-capable" content="yes">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
 
-								<title>Viikkis</title>
+			<title>Viikkis</title>
 
 
-								<!-- Bootstrap Core CSS -->
-								<link href="css/bootstrap.min.css" rel="stylesheet">
-
-									<!-- Custom CSS -->
-									<link href="css/custom.css" rel="stylesheet">
-
-										<!-- Font Awesome CSS -->
-										<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
-											<style>
-
-											</style>
-
-										</head>
-
-										<body>
-											<div class=" container container-login">
-												<div class="container form-signin">
-													<p align="center"><h2> Viikkokisat</h2><br><img src="http://rolffarit.com/images/LOGOT/sitelogo.png" alt="Rolffarit" />
-													</p>
+			<!-- Bootstrap Core CSS -->
+			<link href="css/bootstrap.min.css" rel="stylesheet">
+			<!-- Custom CSS -->
+			<link href="css/custom.css" rel="stylesheet">
+			<!-- Font Awesome CSS -->
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	</head>
+	<body>
+		<div class=" container container-login">
+			<div class="container form-signin">
+				<p align="center"><h2> Viikkokisat</h2><br><img src="http://rolffarit.com/images/LOGOT/sitelogo.png" alt="Rolffarit" />
+				</p>
 
 <?php
 	$msg = '';
@@ -69,7 +63,7 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 			 $username = mysqli_real_escape_string($link, $_POST['username']);
 			 $password = mysqli_real_escape_string($link, $_POST['password']);
 			 
-		$lause = "SELECT Hash, Salt, Password FROM kisakone_user WHERE Username = '$username'";
+		$lause = "SELECT Hash, Salt, Password FROM kisakone_User WHERE Username = '$username'";
 
 			$tulos = mysqli_query($link, $lause);
 			

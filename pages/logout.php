@@ -1,12 +1,10 @@
 <?php
-   session_start();
+session_start();
    unset($_SESSION["valid"]);
    unset($_SESSION["username"]);
    unset($_SESSION["start"]);
    unset($_SESSION["expire"]);
    unset($_SESSION["full_access"]);
-
-   
 
       echo "Kirjauduit ulos.";
 	  

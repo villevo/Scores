@@ -1,6 +1,7 @@
 <?PHP
 
 //user auth
+$scores_session name = session_name("scores");
 session_start();
 if (!(isset( $_SESSION['username']) &&  $_SESSION['username'] != '')) {
 	header ("Location: ../index.php");
@@ -98,7 +99,6 @@ function echoActiveClassIfRequestMatches($requestUri)
 */
 
 if (isset($_SESSION['full_access']) AND $_SESSION['full_access'] == 1 ){
-			echo"
 				<li ";
 					echoActiveClassIfRequestMatches("losted");
 				
@@ -117,19 +117,17 @@ if (isset($_SESSION['full_access']) AND $_SESSION['full_access'] == 1 ){
 					
 
                 </ul>
-				
-				
-				 <ul class="nav navbar-nav navbar-right">
+				<ul class="nav navbar-nav navbar-right">
 				 					<li><a href="../../kisakone" target="_blank">
-						<i class="fa fa-trophy"></i> Kisakone</a>
+						<i class="fa fa-trophy"></i></a>
 					</li>
 
-					<li><a href="http://www.rolffarit.com"  target="_blank">
-						<i class="fa fa-chrome"></i> Rolffarit.com</a>
+					<li><a href="../../"  target="_blank">
+						<i class="fa fa-chrome"></i></a>
 					</li>	
 					
 					<li><a class="navbar-menu-item"  href="../pages/logout.php">
-						<i class="fa fa-sign-out"></i></i> Log-Out</a>
+						<i class="fa fa-sign-out"></i></i> Logout: <?php echo  $_SESSION['username'];  ?></a>
 					</li>
 				</ul>
 			
