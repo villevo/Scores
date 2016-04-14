@@ -11,6 +11,10 @@
 if($link == true){
     echo "<span class='ok_score'>Tietokantayhteys OK.</span><br>";
 }
+include '../include/addScore_eventinfo.php'; 
+$logged_in_username = $_SESSION['username'];
+ECHO $logged_in_username;
+
 ?>
 			
 <div class="form">
@@ -35,7 +39,25 @@ if($link == true){
 	<label for='event_name'class="col-sm-3 control-label">Level:</label>
 		<input type="text" value="2 - Viikkokisa" disabled /> 
   </div>
-  
+  <div class="form-group">
+	<label for='event_name'class="col-sm-3 control-label">Kilpailun TD:</label>
+		<select>
+<?php	  // start players while-loop
+
+			while($row = $tds->fetch_assoc()){
+				$selected = '"> ';
+				if ($row["Username"] == $logged_in_username){
+					$selected = '" selected> ';
+				}
+?>
+		
+				<option  value="<?php echo $row["id"]; echo $selected;  echo $row["Username"]; ?>  </option>
+<?php
+			 } // end players and td loop while-loop
+?>	
+		<option>backup</option>
+		</select>	
+
 <button type="submit" class="btn btn-success btn-lg btn-block">Lisää kilpailu kisakoneeseen</button>
 </div>
 </form>

@@ -136,7 +136,7 @@ if($link == true){
   
 
 
-	<p align=center id=pelaajia>Pelaajia kisakoneessa: <?php echo $row_cnt ?> kpl.</p>
+	<p align=center id=pelaajia>Pelaajia kisakoneessa: <?php echo $player_cnt ?> kpl.</p>
 	
 	<div id="sticky-anchor"></div>
 	<!-- p.search.filter-table  = sticky -->

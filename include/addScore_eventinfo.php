@@ -69,6 +69,19 @@
   kisakone_Player.Lastname
   ";
   $result = $link->query($pelaajat);
-  $row_cnt = $result->num_rows;
+  $player_cnt = $result->num_rows;
+  
+  
+//get td users from scores config.php 
+
+include '../data/config.php';
+$string= implode("' OR username = '",$settings_normal_access);
+
+$tdusers = "  username ='$string'";
+
+    $tdu = "SELECT * FROM kisakone_User  WHERE $tdusers";
+  $tds = $link->query($tdu);
+
   $link->close();
+
 ?>
