@@ -46,17 +46,6 @@ if (time() > $_SESSION['expire']) {
 				$("div.code").slideToggle("code-show");
 				});
 			});	
-			
-
-
-		$(".nav li").click(function() {
-			$(".nav li").removeClass('active');
-			$(this).addClass('active');    
-		});
-		
-		$(document).ready(function() {
-    $('a[href="' + this.location.pathname + '"]').parent().addClass('active');
-});
 	</script>
 	
 	<?php 
@@ -100,9 +89,27 @@ function echoActiveClassIfRequestMatches($requestUri)
 						<i class="fa fa-calendar-plus-o"></i> Lisää kilpailu</a>
 					</li>
 
-					<li <?=echoActiveClassIfRequestMatches("losted")?>><a href="../pages/losted.php">
-						<i class="fa fa-life-ring"></i> Löytökiekot</a>
-					</li>					
+<?php	
+/*					
+<li <?=echoActiveClassIfRequestMatches("event")?>><a href='../pages/losted.php'>
+						<i class='fa fa-life-ring'></i> Löytökiekot</a>
+					</li>	
+
+*/
+
+if (isset($_SESSION['full_access']) AND $_SESSION['full_access'] == 1 ){
+			echo"
+				<li ";
+					echoActiveClassIfRequestMatches("losted");
+				
+				
+			echo	"><a href='../pages/losted.php'>
+						<i class='fa fa-life-ring'></i> Löytökiekot</a>
+					</li>	
+			";
+	}
+	?>
+									
 					
 	
 					<li class="menu_divider_mobile">

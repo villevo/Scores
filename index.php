@@ -60,26 +60,60 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 													<p align="center"><h2> Viikkokisat</h2><br><img src="http://rolffarit.com/images/LOGOT/sitelogo.png" alt="Rolffarit" />
 													</p>
 
+<?php
+	$msg = '';
+		 
+	include './data/config.php';
+		 
+	if(!empty($_POST['username'])){
+			 $username = mysqli_real_escape_string($link, $_POST['username']);
+			 $password = mysqli_real_escape_string($link, $_POST['password']);
+			 
+		$lause = "SELECT Hash, Salt, Password FROM kisakone_user WHERE Username = '$username'";
 
-
-
-
-													<?php
-        $msg = '';
-        $set_username = "test";
-	$set_password = "test";
+			$tulos = mysqli_query($link, $lause);
 			
-			
+			//limit users 
+		if (in_array($username,$settings_normal_access)) {			
+			 
+			 if(mysqli_num_rows($tulos) == 1){
+			   $right_username = $username;
+			   			   $jono = mysqli_fetch_row($tulos);
+			   $hash = $jono[0];
+			   $salt = $jono[1];
+			   $passu = $jono[2];
+			   if (empty($hash))
+				   $hash = "md5";
+			   if ($hash == "md5")
+				   $right_password = md5($password);
+			   if ($hash == "crypt") {
+				  $right_password = crypt($password, '$2y$10$' . $salt . '$');
+			   }
+
+			}else{
+			$msg = 'Väärin meni...';
+			   $right_username = "";
+			   $right_password = "";
+			}
+			$tulos->close();
+		}
+	}
+		 
+
             if (isset($_POST['login']) && !empty($_POST['username']) 
-               && !empty($_POST['password'])) {
-				
-               if ($_POST['username'] == $set_username &&
-				   $_POST['password'] == $set_password ) {
+               && !empty($passu)) {
+               if ($username == $right_username &&
+				   $passu == $right_password ) {
 						$_SESSION['valid'] = true;
-						$_SESSION['username'] = 'scores';
+						$_SESSION['username'] = $username ;
 						$_SESSION['start'] = time(); // Taking now logged in time.  
-						$_SESSION['expire'] = $_SESSION['start'] + (60 * 60 * 4); // Ending a session in 30 minutes from the starting time.
-                  
+						$_SESSION['expire'] = $_SESSION['start'] + (60 * 60 * 4); // Ending a session in 4 hours from the starting time.
+						if (in_array($username,$settings_full_access)) {
+							$_SESSION['full_access'] =  1; // set full access for specified users
+						}
+						
+						
+						
 				  header( 'Location: pages/scores.php' );
 				  exit();
                }else {
@@ -87,30 +121,26 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
                }
             }
          ?>
-												</div>
+			</div>
 												<!-- /container -->
-
-												<div>
-
-													<form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); 
+			<div>
+				<form class="form-signin" role="form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); 
             ?>" method="post">
-															<h4 class="form-signin-heading"><?php echo $msg; ?></h4>
-																<div style="display: flex;">
+						<h4 class="form-signin-heading"><?php echo $msg; ?></h4>
+										<div style="display: flex;">
 								
-																	<input type="text" class="form-control" name="username" placeholder="username" required autofocus>
-																</div>
-															</br>
-																<div style="display: flex;">
-												
-															<input type="password" class="form-control" name="password" placeholder="password" required>
-																</div>
-																
-																<button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Login <i class="fa fa-sign-in"></i></button>
-															</form>
+											<input type="text" class="form-control" name="username" placeholder="username" required autofocus>
+										</div>
+									</br>
+								<div style="display: flex;">		
+							<input type="password" class="form-control" name="password" placeholder="password" required>
+						</div>														
+					<button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Login <i class="fa fa-sign-in"></i></button>
+				</form>
+			<p align="center"> Click here to clean <a href="pages/logout.php" tite="Logout">Session.</p>
+		</div> 
+	</div>
+</body>
+</html>
 
-															<p align="center"> Click here to clean <a href="pages/logout.php" tite="Logout">Session.</p>
 
-															</div> 
-														</div>
-													</body>
-												</html>
