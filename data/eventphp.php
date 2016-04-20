@@ -22,7 +22,7 @@ $err = 0;
 $date =  $_POST["event_date"]; 
 $time =  $_POST["event_time"]; 
 $name =  $_POST["event_name"]; 
-
+$td_id =  $_POST["event_td_id"]; 
 
 
 echo "
@@ -98,14 +98,14 @@ $dt= strtotime($datetime);
 
 		//lisätään kilpailulle TD
 		$addtd = "INSERT INTO kisakone_EventManagement(User,Event,Role)
-                            VALUES(661, $event_id, 'td')";
+                            VALUES('$td_id', $event_id, 'td')";
 		if(mysqli_query($link, $addtd)) {
 					    $em_id = $link->insert_id;
 				
 					echo "eventmanagement tehty onnistuneesti, eventmanagement ID: $em_id 
 							<ul>
 								<li>event: $event_id</li>
-								<li>role: td</li>
+								<li>TD_ID: $td_id</li>
 <br>";
 				} else {
 					$err = $err + 1;

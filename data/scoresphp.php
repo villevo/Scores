@@ -627,7 +627,8 @@ echo "
 	$close_event = "UPDATE kisakone_Event SET ResultsLocked = '$round_endtime' WHERE id = $event_id";		
 		if(mysqli_query($link, $close_event)){
 				echo "
-				Kierros suljettu onnistuneesti.
+					      <span class='ok_score'>Kierros suljettu onnistuneesti.</span><br>
+				
 			";
 			} else{
 				echo "ERROR: Could not able to execute $close_event. " . mysqli_error($link);
@@ -671,9 +672,10 @@ echo '
 			<h4>Kierrokselta tulevat tasoitukset:</h4>
 			<table class='table-hcp table-bordered table-condensed table_player'>
 				<tr>
+					<th colspan=2>Kaava: (Score-rating) * (80/Slope)</th>
+				</tr>
+				<tr>
 					<th>Player</th>
-					<th>Score - Rating</th>
-					<td>=</td>
 					<th>Round-HCP</th>
 				</tr>
 			";
@@ -708,8 +710,6 @@ echo '
 					$ins = mysqli_query($link, "insert into kisakone_RoundResultHandicap (RoundResult,Handicap) values ($id,$hcp)");
 					echo "<tr>
 							<td>$p_fist $p_last</td>
-							<td>$score - $result2_course_rating</td>
-							<td>=</td>
 							<td>$hcp</td>
 						</tr>	
 							

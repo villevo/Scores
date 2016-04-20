@@ -36,12 +36,12 @@ ECHO $logged_in_username;
   </div>
   
   <div class="form-group">
-	<label for='event_name'class="col-sm-3 control-label">Level:</label>
+	<label for='event_level'class="col-sm-3 control-label">Level:</label>
 		<input type="text" value="2 - Viikkokisa" disabled /> 
   </div>
   <div class="form-group">
-	<label for='event_name'class="col-sm-3 control-label">Kilpailun TD:</label>
-		<select>
+	<label for='event_td_id'class="col-sm-3 control-label">Kilpailun TD:</label>
+		<select name="event_td_id" id="event_td_id">
 <?php	  // start players while-loop
 
 			while($row = $tds->fetch_assoc()){
@@ -55,7 +55,6 @@ ECHO $logged_in_username;
 <?php
 			 } // end players and td loop while-loop
 ?>	
-		<option>backup</option>
 		</select>	
 
 <button type="submit" class="btn btn-success btn-lg btn-block">Lisää kilpailu kisakoneeseen</button>
