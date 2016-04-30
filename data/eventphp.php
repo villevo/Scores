@@ -23,6 +23,9 @@ $date =  $_POST["event_date"];
 $time =  $_POST["event_time"]; 
 $name =  $_POST["event_name"]; 
 $td_id =  $_POST["event_td_id"]; 
+$venue_id =  $_POST["event_venue_id"]; 
+
+
 
 
 echo "
@@ -82,7 +85,7 @@ $dt= strtotime($datetime);
 
 		//lisätään kilpailu kantaan
 		$addevent = "INSERT INTO kisakone_Event(Venue, Level, Name, Date, Duration,Activationdate, PlayerLimit)
-                            VALUES(37, 2, '$name', FROM_UNIXTIME($dt), '1' , CURRENT_TIMESTAMP, '200' )";
+                            VALUES('$venue_id', 2, '$name', FROM_UNIXTIME($dt), '1' , CURRENT_TIMESTAMP, '200' )";
 		if(mysqli_query($link, $addevent)) {
 					    $event_id = $link->insert_id;
 				

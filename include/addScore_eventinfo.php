@@ -14,6 +14,7 @@
   kisakone_Round.StartTime DESC
   "; // Run your query  
   $kisat_result = $link->query($kisat);
+
   $radat = "
   SELECT 
   kisakone_Course.id, 
@@ -33,11 +34,25 @@
   GROUP BY
   kisakone_Course.id
   ORDER BY
-  kisakone_Course.id ASC
+  kisakone_Course.id DESC
   "; // Run your query
   $radat_result = $link->query($radat);
   
   
+  
+$venue = "
+SELECT * 
+FROM
+kisakone_venue
+  "; // Run your query
+  $venue_result = $link->query($venue);
+  
+  
+
+
+
+
+
   $pelaajat = "
   SELECT
   kisakone_Player.player_id,

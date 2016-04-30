@@ -1,9 +1,3 @@
-
-
-
-
-
-
 <form class="form-horizontal" action="../pages/add_event.php" id="lisaaviikkis" method="post">
 
 <?php
@@ -13,7 +7,6 @@ if($link == true){
 }
 include '../include/addScore_eventinfo.php'; 
 $logged_in_username = $_SESSION['username'];
-ECHO $logged_in_username;
 
 ?>
 			
@@ -42,7 +35,7 @@ ECHO $logged_in_username;
   <div class="form-group">
 	<label for='event_td_id'class="col-sm-3 control-label">Kilpailun TD:</label>
 		<select name="event_td_id" id="event_td_id">
-<?php	  // start players while-loop
+<?php	  // start td while-loop
 
 			while($row = $tds->fetch_assoc()){
 				$selected = '"> ';
@@ -53,10 +46,32 @@ ECHO $logged_in_username;
 		
 				<option  value="<?php echo $row["id"]; echo $selected;  echo $row["Username"]; ?>  </option>
 <?php
-			 } // end players and td loop while-loop
+			 } // end td loop while-loop
 ?>	
 		</select>	
+	</div>
+	
+	
+	<div class="form-group">
+	<label for='event_venue_id'class="col-sm-3 control-label">Paikka:</label>
+		<select name="event_venue_id" id="event_venue_id">
+<?php	  // start venue while-loop
 
+			while($row = $venue_result->fetch_assoc()){
+
+?>
+		
+				<option  value="<?php echo $row["id"]; ?>"><?php  echo $row["Name"]; ?>  </option>
+<?php
+			 } // end venue loop while-loop
+?>	
+		</select>	
+	</div>
+	
+	
+	
+	
 <button type="submit" class="btn btn-success btn-lg btn-block">Lisää kilpailu kisakoneeseen</button>
 </div>
+
 </form>
