@@ -14,6 +14,24 @@
   kisakone_Round.StartTime DESC
   "; // Run your query  
   $kisat_result = $link->query($kisat);
+  
+  $ajankohtaiset_kisat=  "SELECT kisakone_Event.id,
+  kisakone_Event.Name,
+  kisakone_Event.ResultsLocked,
+  kisakone_Round.id,
+  kisakone_Round.StartTime
+  FROM
+  kisakone_Event,
+  kisakone_Round
+  WHERE
+  kisakone_Event.Level = 2 AND
+  kisakone_Event.id = kisakone_Round.Event AND
+  ORDER BY
+  kisakone_Round.StartTime DESC
+  
+  "; // Run your query  
+  $ajankohtaiset_kisat_result = $link->query($ajankohtaiset_kisat);
+  
 
   $radat = "
   SELECT 
@@ -46,46 +64,7 @@ FROM
 kisakone_venue
   "; // Run your query
   $venue_result = $link->query($venue);
-  
-  
 
-
-
-
-
-  $pelaajat = "
-  SELECT
-  kisakone_Player.player_id,
-  kisakone_Player.Lastname,
-  kisakone_Player.Firstname,
-  kisakone_User.Username
-  FROM
-  kisakone_Player,
-  kisakone_User
-  WHERE
-  kisakone_Player.player_id = kisakone_User.Player
-  AND
-  kisakone_User.Username is not null
-  and
-  kisakone_Player.Firstname NOT LIKE 'pari'
-  AND
-  kisakone_Player.Lastname NOT LIKE 'pari'
-  AND
-  kisakone_Player.Lastname NOT LIKE 'Pari'
-  AND 
-  kisakone_Player.Lastname NOT LIKE 'Pari'
-  AND
-  kisakone_User.id != 709
-   AND
-  kisakone_User.id != 920
-     AND
-  kisakone_User.id != 1002
-  ORDER BY 
-  kisakone_Player.Lastname
-  ";
-  $result = $link->query($pelaajat);
-  $player_cnt = $result->num_rows;
-  
   
 //get td users from scores config.php 
 
@@ -96,7 +75,5 @@ $tdusers = "  username ='$string'";
 
     $tdu = "SELECT * FROM kisakone_User  WHERE $tdusers";
   $tds = $link->query($tdu);
-
-  $link->close();
 
 ?>

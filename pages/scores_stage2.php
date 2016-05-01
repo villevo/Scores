@@ -20,12 +20,12 @@
             <div class="col-md-8">
 
                 <h1 class="page-header">
-                    Tulosten syöttö  1/2
+                    Tulosten syöttö
 
                 </h1>
 
                 <!-- tulosten lisäys-lomake -->
-					<?php include '../include/addScore_stage1.php';?>
+					<?php include '../include/addScore_stage2.php';?>
 
             </div>
 
