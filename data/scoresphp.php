@@ -15,7 +15,7 @@ require_once '../data/config.php';
 
 //varmistetaan että kierros ja rata on valittu.
 echo "<h3>Tarkastetaan annettuja kilpailu- ja rata-tiedot:<br></h3>";
-    if ($_POST['round'] ==  "no_round") {
+    if ($_POST['round'] ==  "no_round") {	
 		die("<h1>ERROR: Vituiks meni, et valinnut kierrosta! pysäytetty</h1> Paina selaimen takaisin nappia ja valitse kierros");
     } else {
         echo "<div class='code-show'>rundi ok, jatketaan...<br>";
@@ -140,49 +140,85 @@ $round_endtime = date('Y-m-d H:i', $fixed_time);
 		
 		//kaiken vanhan tiedon poisto kannasta:
 echo "
-<div class='code-show'><h3><b>poistetaan vanhat kilpailun tiedot:</b><br></h3>";
-	$sql = "delete from kisakone_Participation where kisakone_Participation.Event = $event_id";
+<div class='code-show'><h3><b>poistetaan  kilpailun vanhat tiedot:</b><br></h3>";
+	
+	
+	
+	$sql = "
+DELETE kisakone_holeresult.* from 
+kisakone_holeresult, kisakone_roundresult 
+where 
+kisakone_holeresult.RoundResult = kisakone_roundresult.id 
+and
+kisakone_roundresult.Round = $round";
+			if ($link->query($sql) === TRUE) {
+				echo "Väylätuloset, ";
+			} else {
+				echo "Error deleting record: " . $link->error;
+			}
+			
+	$sql = "
+DELETE kisakone_roundresulthandicap.* from 
+kisakone_roundresult, kisakone_roundresulthandicap 
+where 
+kisakone_roundresulthandicap.RoundResult = kisakone_roundresult.id 
+and
+kisakone_roundresult.Round = $round
+";
+			if ($link->query($sql) === TRUE) {
+				echo "tasoituskierrokset, ";
+			} else {
+				echo "Error deleting record: " . $link->error;
+			}			
+			
+			
+$sql = "DELETE FROM kisakone_RoundResult WHERE kisakone_RoundResult.Round = $round";
+			if ($link->query($sql) === TRUE) {
+				echo "kierrostulokset, ";
+			} else {
+				echo "Error deleting record: " . $link->error;
+			}
+			
+				$sql = "delete from kisakone_Participation where kisakone_Participation.Event = $event_id";
 			if ($link->query($sql) === TRUE) {
 				echo "ilmoittautumiset, ";
 			} else {
 				echo "Error deleting record: " . $link->error;
 			}
-	$sql = "DELETE FROM kisakone_ClassInEvent WHERE kisakone_ClassInEvent.Event = $event_id";
+			
+			
+$sql = "
+delete kisakone_StartingOrder.* FROM kisakone_Section, kisakone_StartingOrder 
+WHERE 
+kisakone_startingorder.Section = kisakone_section.id 
+AND
+kisakone_section.Round = $round
+";
+			if ($link->query($sql) === TRUE) {
+				echo "Starting_order,  ";
+			} else {
+				echo "Error deleting record: " . $link->error;
+			}
+$sql = "DELETE FROM kisakone_Section WHERE kisakone_Section.Round = $round";
+			if ($link->query($sql) === TRUE) {
+				echo "lohkot, ";
+			} else {
+				echo "Error deleting record: " . $link->error;
+			}
+$sql = "DELETE FROM kisakone_ClassInEvent WHERE kisakone_ClassInEvent.Event = $event_id";
 			if ($link->query($sql) === TRUE) {
 				echo "kilpailun luokat, ";
 			} else {
 				echo "Error deleting record: " . $link->error;
 			}
-	$sql = "DELETE FROM kisakone_RoundResult WHERE kisakone_RoundResult.Round = $round";
-			if ($link->query($sql) === TRUE) {
-				echo "kierrostulokset ";
-			} else {
-				echo "Error deleting record: " . $link->error;
-			}
 
 
-	$sql = "DELETE FROM kisakone_Section WHERE kisakone_Section.Round = $round";
-			if ($link->query($sql) === TRUE) {
-				echo "ja kilpailun lohkot puhdistettu.";
-			} else {
-				echo "Error deleting record: " . $link->error;
-			}
-
-//deletet suoritettu.paitsi starting order......
-echo "TODO: Startingorder puhdistamatta";
-echo "</div>
-
-<button class='btn btn-primary btn-xs btn-block'>Näytä/piilota yksityiskohtaiset tiedot</button>
-
-";
-
-
+//------------  VANHAT KILPAILU TIEDOT POISTETTU TIETOKANNASTA, ALETAAN LISÄÄMÄÄN UUTTA TIETOA ----------
 
 echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><br></h3>------------------------------------------------------------------------------------------------------<br>Kilpailua koskevien tietojen lisääminen:";
 
 
-
-
+echo "<button class='btn btn-primary btn-xs btn-block'>Näytä/piilota yksityiskohtaiset tiedot</button>";
 
 // radan lisäys kilpailulle
 	$rata = "UPDATE kisakone_Round SET Course='$course_id' WHERE id=$round";		
@@ -194,7 +230,7 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 //lohko
 	
 			$lohko = "INSERT INTO kisakone_Section(Round, Classification, Name, Present)
-                            VALUES($round, 1, 1000, 1)";
+                            VALUES($round, 1, 'Lohko1', 1)";
 		if(mysqli_query($link, $lohko)) {
 					    $section_id = $link->insert_id;
 				
@@ -215,7 +251,7 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 					echo "ERROR: Luokkaa ei voitu lisätä kilpailulle $mpo. <br>" . mysqli_error($link);
 
 				}
-			//Fpo loukan lisääminen, jos lomakkeesta valittu FPO!!!
+			//Fpo loukan lisääminen, jos lomakkeesta valittu FPO
 			
 			if ($classes_fpo == 1){
 		$fpo = "INSERT INTO kisakone_ClassInEvent(Classification, Event)
@@ -350,7 +386,7 @@ if ($classes_fpo == 1){
 		//lähtöjärjestys kierrokselle	
 						
 							$starting_order = "INSERT INTO kisakone_StartingOrder (Player, Section, StartingTime, StartingHole, GroupNumber)
-									VALUES ($pid, $section_id, '2015-11-09 16:50:00', 1, 1)";
+									VALUES ($pid, $section_id, NOW(), 1, 1)";
 							if(mysqli_query($link, $starting_order)){
 									$starting_order_id = $link->insert_id;
 							echo "<li>lähtöjärjestys id:  $starting_order_id</li>";
@@ -637,9 +673,9 @@ echo "
 			
 			
 echo ' 
+</div> 
 </div>
 </div>
-
  <!-- Blog Sidebar Widgets Column -->
             <div class="col-md-4">
                 <!-- Side Widget Well -->

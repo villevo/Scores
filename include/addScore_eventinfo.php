@@ -26,6 +26,7 @@
   WHERE
   kisakone_Event.Level = 2 AND
   kisakone_Event.id = kisakone_Round.Event AND
+  (kisakone_Round.StartTime > NOW() - INTERVAL 2 WEEK OR   kisakone_Event.ResultsLocked IS NULL)
   ORDER BY
   kisakone_Round.StartTime DESC
   
