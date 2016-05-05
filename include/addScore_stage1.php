@@ -23,7 +23,7 @@ if($link == true){
       Tulosten lisääminen kohta 1/3
     </div>
   </div>
-  Kilpailut listassa näkyy kaikki kilpailut jotka eivät ole <i>suljettu</i> JA <i>suljeista</i> kilpailuista kilpailut joiden päivämäärä on alle 2 viikkoa.
+  Kilpailut listassa näkyy kaikki kilpailut jotka eivät ole <i>suljettu</i> JA <i>suljeista</i> kilpailuista kilpailut joiden päivämäärä on alle 2 viikkoa vanha.
   <br>
   <br>
  	<label for='round' class="col-sm-3 control-label">Kilpailu:</label>
@@ -51,8 +51,22 @@ if($link == true){
 
   </div>
 
-  <button type="submit" class="btn btn-success btn-lg btn-block">Jatka <i class="fa fa-arrow-right" aria-hidden="true"></i></button>		
+  <button onclick="return validate_round()" type="submit"  class="btn btn-success btn-lg btn-block">Jatka <i class="fa fa-arrow-right" aria-hidden="true"></i></button>		
   </div>
 
 </form>
+
+<script>
+
+function validate_round()
+{
+   if(document.getElementById("dropdown_round").value == "no_round")
+   {
+      alert("KILPAILUA EI VALITTU."); // prompt user
+      document.getElementById("dropdown_round").focus(); //set focus back to control
+      return false;
+   }
+}
+
+
 </script>

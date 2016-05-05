@@ -115,7 +115,7 @@ $r_id = $_POST['round_select_stage1'];
 				echo "</select>";
 				if($result_locked == 1){
 						echo ' <br><span style="color: red; font-size: small;"> <b>Varoitus:</b> 
-						Valittuun kilpailuun on jo syötetty tuloksia, rata ja luokka-tiedot pitää antaa uudelleen!
+						Valittuun kilpailuun on jo syötetty tuloksia, luokka-tiedot pitää antaa uudelleen!
 						</span>
 						
 						
@@ -130,12 +130,14 @@ $r_id = $_POST['round_select_stage1'];
           <h4 class="modal-title">Ohjeet</h4>
         </div>
         <div class="modal-body">
-			<h2>Valitsit kierroksen jolta löytyy jo tuloksia</h2>
+			<h2> <i class="fa fa-exclamation-triangle fa-4x" aria-hidden="true" style="color:red;"></i><br>
+			Valitsit kierroksen jolta löytyy jo tuloksia</h2>
+			
 			Nyt voit muuttaa pelattavaa rataa, pelattavia luokkia, lisätä/poistaa pelaajien tuloksia tai muokata pelaajan tulosta.
 			<br>
 			<ul>
-				<li>Valitse kierroksen rata ja pelatavat luokat, Nämä tiedot täytyy syöttää uudelleen vaikka ne on alun perin asetettukin</li>
-				<li>Jos kilpailussa pelattua rataa tai pelattavia luokkia pitää muokata niin valitsemasi valinnat päivittää kilpailun tiedot<li>
+				<li><u>Pelattavat luokat täytyy syöttää uudelleen vaikka ne on alun perin asetettukin</u></li>
+				<li>Jos kilpailussa pelattua rataa tai pelattavia luokkia pitää muokata niin valitsemasi valinnat päivittää kilpailun tiedot</li>
 				<br>
 				<ul><b>Pelaajat ja scoret:</b>
 				<li>Pelaajien aikaisemmat tulokset kierrokselta ovat pelaajalistassa valmiina, lista on järjestetty suurimmasta numerosta alaspäin.</li>
@@ -159,6 +161,18 @@ $r_id = $_POST['round_select_stage1'];
 ';
 				}
 
+				
+
+  $selected_course = array_values(mysqli_fetch_array($link->query("
+  SELECT
+  kisakone_Round.Course
+  FROM
+  kisakone_Round
+  WHERE
+  kisakone_Round.id = $r_id limit 1" )))[0];
+
+
+				
 ?>
 
 					
@@ -169,7 +183,14 @@ $r_id = $_POST['round_select_stage1'];
 			<option value='no_course'>VALITSE RATA Par xx (Rating/Slope)</option>
 				<?php
 					while($row = $radat_result->fetch_assoc()){
-						echo '<option value="'.$row['id'].'">'  . $row['Name']. ' Par ' .$row['par'].'  ---   (' .$row['rating'].'/' .$row['slope']. ')</option>';
+						
+					$selected = '> ';
+					if ($row["id"] == $selected_course){
+						$selected = ' selected> ';
+					}
+					
+					
+						echo '<option value="'.$row['id']. '"' .$selected. ' '  . $row['Name']. ' Par ' .$row['par'].'  ---   (' .$row['rating'].'/' .$row['slope']. ')</option>';
 					}
 				?>
 	</select>
@@ -189,6 +210,8 @@ $r_id = $_POST['round_select_stage1'];
 				</div>
 			</th>
 
+			
+						
 			<th>
 				<div class="class_switch">FPO
 					<div class="material-switch">
@@ -298,7 +321,7 @@ kisakone_Participation
 		  </tbody>
 
 		</table>		
-  <button type="submit" class="btn btn-success btn-lg btn-block">Lisää tulokset</button>		
+  <button onclick="return validate_course()" type="submit" class="btn btn-success btn-lg btn-block">Lisää tulokset</button>		
   </div>
 
 </form>
@@ -321,6 +344,17 @@ $(document).ready(function(){
 
 
 });
+
+
+function validate_course()
+{
+   if(document.getElementById("dropdown_course").value == "no_course")
+   {
+      alert("RATAA EI OLE VALITTU"); // prompt user
+      document.getElementById("dropdown_course").focus(); //set focus back to control
+      return false;
+   }
+}
 
 
 
