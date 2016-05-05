@@ -246,17 +246,16 @@ $r_id = $_POST['round_select_stage1'];
   kisakone_Player.Lastname,
   kisakone_Player.Firstname,
   kisakone_User.Username,
-  kisakone_participation.OverallResult AS res
+  kisakone_Participation.OverallResult AS res
   FROM
     kisakone_User,
   kisakone_Player
   LEFT JOIN 
 kisakone_Participation
   ON 
-  kisakone_Player.player_id = kisakone_participation.Player 
+  kisakone_Player.player_id = kisakone_Participation.Player 
   AND
   kisakone_Participation.Event =  $e_id
-  
   WHERE
   kisakone_Player.player_id = kisakone_User.Player
   AND
@@ -271,9 +270,9 @@ kisakone_Participation
   kisakone_Player.Lastname NOT LIKE 'Pari'
   AND
   kisakone_User.id != 709
-   AND
+  AND
   kisakone_User.id != 920
-     AND
+  AND
   kisakone_User.id != 1002
   ORDER BY 
   kisakone_Participation.OverallResult DESC, kisakone_Player.Lastname

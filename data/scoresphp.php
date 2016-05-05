@@ -145,12 +145,12 @@ echo "
 	
 	
 	$sql = "
-DELETE kisakone_holeresult.* from 
-kisakone_holeresult, kisakone_roundresult 
-where 
-kisakone_holeresult.RoundResult = kisakone_roundresult.id 
-and
-kisakone_roundresult.Round = $round";
+DELETE kisakone_HoleResult.* FROM 
+kisakone_HoleResult, kisakone_RoundResult 
+WHERE
+kisakone_HoleResult.RoundResult = kisakone_RoundResult.id 
+AND
+kisakone_RoundResult.Round = $round";
 			if ($link->query($sql) === TRUE) {
 				echo "Väylätuloset, ";
 			} else {
@@ -158,12 +158,12 @@ kisakone_roundresult.Round = $round";
 			}
 			
 	$sql = "
-DELETE kisakone_roundresulthandicap.* from 
-kisakone_roundresult, kisakone_roundresulthandicap 
-where 
-kisakone_roundresulthandicap.RoundResult = kisakone_roundresult.id 
+DELETE kisakone_RoundResultHandicap.* FROM
+kisakone_RoundResult, kisakone_RoundResultHandicap
+WHERE
+kisakone_RoundResultHandicap.RoundResult = kisakone_RoundResult.id 
 and
-kisakone_roundresult.Round = $round
+kisakone_RoundResult.Round = $round
 ";
 			if ($link->query($sql) === TRUE) {
 				echo "tasoituskierrokset, ";
@@ -179,7 +179,7 @@ $sql = "DELETE FROM kisakone_RoundResult WHERE kisakone_RoundResult.Round = $rou
 				echo "Error deleting record: " . $link->error;
 			}
 			
-				$sql = "delete from kisakone_Participation where kisakone_Participation.Event = $event_id";
+				$sql = "DELETE FROM kisakone_Participation WHERE kisakone_Participation.Event = $event_id";
 			if ($link->query($sql) === TRUE) {
 				echo "ilmoittautumiset, ";
 			} else {
@@ -188,11 +188,11 @@ $sql = "DELETE FROM kisakone_RoundResult WHERE kisakone_RoundResult.Round = $rou
 			
 			
 $sql = "
-delete kisakone_StartingOrder.* FROM kisakone_Section, kisakone_StartingOrder 
+DELETE kisakone_StartingOrder.* FROM kisakone_Section, kisakone_StartingOrder 
 WHERE 
-kisakone_startingorder.Section = kisakone_section.id 
+kisakone_StartingOrder.Section = kisakone_section.id 
 AND
-kisakone_section.Round = $round
+kisakone_Section.Round = $round
 ";
 			if ($link->query($sql) === TRUE) {
 				echo "Starting_order,  ";

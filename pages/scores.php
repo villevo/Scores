@@ -20,7 +20,7 @@
             <div class="col-md-8">
 
                 <h1 class="page-header">
-                    Tulosten syöttö  1/2
+                    Tulosten syöttö
 
                 </h1>
 

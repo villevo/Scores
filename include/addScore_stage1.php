@@ -18,12 +18,8 @@ if($link == true){
   
   <div class="form">
   
-    <div class="progress">
-    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:33%">
-      Tulosten lisääminen kohta 1/3
-    </div>
-  </div>
-  Kilpailut listassa näkyy kaikki kilpailut jotka eivät ole <i>suljettu</i> JA <i>suljeista</i> kilpailuista kilpailut joiden päivämäärä on alle 2 viikkoa vanha.
+
+ <i> Kilpailut</i>-listassa näkyy kaikki auki olevat viikkokisat JA alle 2viikkoa vanhat viikkokisat tulosten korjausta varten.
   <br>
   <br>
  	<label for='round' class="col-sm-3 control-label">Kilpailu:</label>

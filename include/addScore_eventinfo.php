@@ -62,7 +62,7 @@
 $venue = "
 SELECT * 
 FROM
-kisakone_venue
+kisakone_Venue
   "; // Run your query
   $venue_result = $link->query($venue);
 

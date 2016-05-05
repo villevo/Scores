@@ -257,6 +257,11 @@ table.table.table-bordered.table-condensed.table_player {
     background-color: white;
     width: 400px;
 }
+.navbar-default {
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    height: 100%;
+}
 
   h3 {
     display: block;
@@ -492,4 +497,10 @@ th.classes_th {
 
 .material-switch {
     padding-left: 10px;
+}
+
+
+abbr[data-original-title], abbr[title] {
+    cursor: help;
+    border-bottom: 0px dotted #777;
 }
