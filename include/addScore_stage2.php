@@ -290,6 +290,7 @@ kisakone_Participation
 		<table class="table table-bordered players_table">
 		  <thead>
 			<tr >
+			  <th style="width:10px;" class="table_header"></th>				
 			  <th class="table_header">Nimi</th>
 			  <th class="table_header">Score</th>
 			</tr>
@@ -298,14 +299,35 @@ kisakone_Participation
 		  <tbody>
 		  <?php	   // start players while-loop
 			while($row = $players->fetch_assoc()){
+				
+				$pid = $row["player_id"];
+					$hcp_rounds = "SELECT
+						COUNT(kisakone_RoundResultHandicap.Handicap) AS cnt
+						FROM
+						kisakone_RoundResult
+						LEFT JOIN
+						kisakone_RoundResultHandicap 
+						ON
+						kisakone_RoundResultHandicap.RoundResult = kisakone_RoundResult.id
+						WHERE
+						kisakone_RoundResult.Player = $pid
+  ";
+	$hcp_cnt = array_values(mysqli_fetch_array($link->query($hcp_rounds)))[0];
+
+			
+				
+				
           ?>
 		  
 			<tr>
+				<td class="td_cnt">
+				<?php echo $hcp_cnt; ?>
+				</td>
 				<td class="td_player">
-					<abbr class="player_abbr"title="player_id: <?php echo $row["player_id"];?> Username: <?php echo $row["Username"];?>">  <?php echo $row["Firstname"];?>  <?php echo $row["Lastname"];?>
+					<abbr class="player_abbr"title="player_id: <?php echo $row["player_id"];?> Username: <?php echo $row["Username"];?>">  <?php echo $row["Firstname"];?>  <?php echo $row["Lastname"];  ?>
 					</abbr>		
 				</td>
-				
+
 				
 				<td class="td_score">	
 					<input type="tel"  name="score_<?php echo $row["player_id"]; ?>" id="scorefield" max="999" value="<?php echo $row["res"];?>">
