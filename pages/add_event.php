@@ -30,11 +30,11 @@
 
             <!-- Blog Sidebar Widgets Column -->
             <div class="col-md-4">
-                <!-- Side Widget Well 
+                <!-- Side Widget Well  -->
                 <div class="well">
 					<?php include '../include/addEvent_help.php';?>
                 </div>
--->
+
             </div>
 
         </div>

@@ -14,7 +14,10 @@ require_once '../data/config.php';
 
 
 //varmistetaan että kierros ja rata on valittu.
-echo "<h3>Tarkastetaan annettuja kilpailu- ja rata-tiedot:<br></h3>";
+echo "
+
+
+<h3>Tarkastetaan annettuja kilpailu- ja rata-tiedot:<br></h3>";
     if ($_POST['round'] ==  "no_round") {	
 		die("<h1>ERROR: Vituiks meni, et valinnut kierrosta! pysäytetty</h1> Paina selaimen takaisin nappia ja valitse kierros");
     } else {
@@ -61,8 +64,11 @@ $nocount = 0;
 	}		
 
 		  
-echo "</div>";
-
+echo "</div>
+<div id='loading'>
+ 	<img src='../images/loadinganimation.gif' style='width: 25px;'> Tietoja käsitellään...
+</div>
+";
 
 		
 		// ----  tiedot lomakkeesta -----
@@ -140,6 +146,7 @@ $round_endtime = date('Y-m-d H:i', $fixed_time);
 		
 		//kaiken vanhan tiedon poisto kannasta:
 echo "
+
 <div class='code-show'><h3><b>poistetaan  kilpailun vanhat tiedot:</b><br></h3>";
 	
 	
@@ -214,11 +221,11 @@ $sql = "DELETE FROM kisakone_ClassInEvent WHERE kisakone_ClassInEvent.Event = $e
 
 
 //------------  VANHAT KILPAILU TIEDOT POISTETTU TIETOKANNASTA, ALETAAN LISÄÄMÄÄN UUTTA TIETOA ----------
-
+echo "<button class='btn btn-primary btn-xs btn-block'>Näytä/piilota yksityiskohtaiset tiedot</button>";
 echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><br></h3>------------------------------------------------------------------------------------------------------<br>Kilpailua koskevien tietojen lisääminen:";
 
 
-echo "<button class='btn btn-primary btn-xs btn-block'>Näytä/piilota yksityiskohtaiset tiedot</button>";
+
 
 // radan lisäys kilpailulle
 	$rata = "UPDATE kisakone_Round SET Course='$course_id' WHERE id=$round";		
@@ -426,7 +433,7 @@ if ($classes_fpo == 1){
 			} //pelaajien foreach loppuu
 
 
-	echo '</div>
+	echo '
 
 	<div>
 		<div class="leaderboards">
@@ -653,22 +660,14 @@ echo "
 			<br> FPO-standing lisätty $count_fpo  pelaajalle
 		</div>
 	</div>
-</div>"; 
+</div>
+</div> <!-- yksityiskohdat piiloon-->"; 
 
 
 
 
 
-// lopuksi suljetaan kilpailu kisakoneessa, kaikki tarvittava tieto on nyt kisakoneessa.
-	$close_event = "UPDATE kisakone_Event SET ResultsLocked = '$round_endtime' WHERE id = $event_id";		
-		if(mysqli_query($link, $close_event)){
-				echo "
-					      <span class='ok_score'>Kierros suljettu onnistuneesti.</span><br>
-				
-			";
-			} else{
-				echo "ERROR: Could not able to execute $close_event. " . mysqli_error($link);
-			}
+
 			
 			
 			
@@ -681,7 +680,16 @@ echo '
                 <!-- Side Widget Well -->
 			';
 
-			
+// lopuksi suljetaan kilpailu kisakoneessa, kaikki tarvittava tieto on nyt kisakoneessa. roundresulthandicap laitetaan tämän jälkeen.
+	$close_event = "UPDATE kisakone_Event SET ResultsLocked = '$round_endtime' WHERE id = $event_id";		
+		if(mysqli_query($link, $close_event)){
+				echo "
+					      <span class='ok_score'>Kierros suljettu onnistuneesti.</span><br>
+				
+			";
+			} else{
+				echo "ERROR: Could not able to execute $close_event. " . mysqli_error($link);
+			}			
 			
 			// __ -- ** HCP ** -- __
       // (re-)calculate roundresult handicaps when event is closed 
@@ -705,16 +713,10 @@ echo '
 	) or die(mysql_error());
 
 			echo "<div class='code-show'>
-			<h4>Kierrokselta tulevat tasoitukset:</h4>
-			<table class='table-hcp table-bordered table-condensed table_player'>
-				<tr>
-					<th colspan=2>Kaava: (Score-rating) * (80/Slope)</th>
-				</tr>
-				<tr>
-					<th>Player</th>
-					<th>Round-HCP</th>
-				</tr>
+			<h3>Kierrokselta tulevat tasoitukset:</h3>
+			Tasoituskierrokset laskettu:
 			";
+		$hcp_counter = 0;
 		
       foreach ($result as $row) {
 
@@ -744,20 +746,17 @@ echo '
 
 					$del = mysqli_query($link, "delete from kisakone_RoundResultHandicap where RoundResult=$id");									
 					$ins = mysqli_query($link, "insert into kisakone_RoundResultHandicap (RoundResult,Handicap) values ($id,$hcp)");
-					echo "<tr>
-							<td>$p_fist $p_last</td>
-							<td>$hcp</td>
-						</tr>	
+					$hcp_counter += 1;
 							
 							
 							
 							
-							";
+							
 	   }
 
 } //HCP foreach loppuu...
 echo "
-		</table>
+		$hcp_counter pelaajalle.
 		</div>
 		<br>
 		<div class='well'>
@@ -769,6 +768,9 @@ echo "
 								Jos virheitä ei näy niin tulokset lisätty onnistuneesti.
 								<a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' target='_new' id = 'link_kk'>
 								Suoralinkki leaderboardiin.</a>
+								<br>
+								<br>
+								Tarkista leaderboard-kisakoneen puolelta,<u> JOS</u> virheitä niin paina takaisin nappia niin pääset korjaamaan tuloksia samantien. 
 							</div>
 						</div>
 					
@@ -790,7 +792,12 @@ mysqli_close($link);
 
 
 
-
+echo "
+<script language='javascript' type='text/javascript'>
+     $(window).load(function() {
+     $('#loading').hide();
+  });
+</script>";
 
 	
 	

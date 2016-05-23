@@ -504,3 +504,10 @@ abbr[data-original-title], abbr[title] {
     cursor: help;
     border-bottom: 0px dotted #777;
 }
+
+#loading {
+  
+    background-color: #fff;
+    text-align: center;
+    margin: auto;
+}
