@@ -15,15 +15,18 @@
 
 include '../include/addScore_eventinfo.php';
 
-// Check connection
-if ($_POST['round_select_stage1'] ==  "no_round" or !isset($_POST['round_select_stage1'])) {
-			die("<h1>ERROR: Vituiks meni, et valinnut kierrosta! pysäytetty</h1> Palaa takaisin <a href ='../pages/scores.php'> kilpailun valinta-sivulle</a>");
-			} else
-
-
 if($link == true){
     echo "<span class='ok_score'>Tietokantayhteys OK.</span><br>";
 }
+//Round check
+if ($_GET['round_select_stage1'] ==  "no_round" or !isset($_GET['round_select_stage1'])) {
+			die("<h1>ERROR: Vituiks meni, et valinnut kierrosta! pysäytetty</h1> Palaa takaisin <a href ='../pages/scores.php'> kilpailun valinta-sivulle</a>");
+			}
+$r_id = $_GET['round_select_stage1'];
+
+
+
+
 ?>
 
 
@@ -76,7 +79,7 @@ function autoscroll() {
 			<select class="input-sm" id="dropdown_round" name="round"> 
 					
 <?php
-$r_id = $_POST['round_select_stage1'];
+
 
 	$query=  "SELECT kisakone_Event.id,
   kisakone_Event.Name,
@@ -105,7 +108,7 @@ $r_id = $_POST['round_select_stage1'];
 								$result_lock = "!***";
 								$result_locked = 1;
 							}
-							if($row['id'] == $_POST['round_select_stage1']){
+							if($row['id'] == $_GET['round_select_stage1']){
 						
 								echo '
 								<option value="'.$row['id'].'"> '.$result_lock.' '. $row['Name'] .' -------   ' . $row['FixedStartTime'].'</option>';

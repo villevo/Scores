@@ -102,7 +102,6 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 						$_SESSION['valid'] = true;
 						$_SESSION['username'] = $username ;
 						$_SESSION['start'] = time(); // Taking now logged in time.  
-						$_SESSION['expire'] = $_SESSION['start'] + (60 * 60 * 4); // Ending a session in 4 hours from the starting time.
 						if (in_array($username,$settings_full_access)) {
 							$_SESSION['full_access'] =  1; // set full access for specified users
 						}

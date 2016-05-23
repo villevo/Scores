@@ -12,7 +12,7 @@ if($link == true){
   
 
   
-<form class="form-horizontal" action="../pages/scores_stage2.php" method="post">
+<form class="form-horizontal" action="../pages/scores_stage2.php" method="GET">
 
 
   
