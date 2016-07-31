@@ -1,3 +1,6 @@
 data/config.php
 *.zip
 *.bak
+images/Thumbs.db
+images/Thumbs.db
+*.db

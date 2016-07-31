@@ -47,8 +47,8 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 	<body>
 		<div class=" container container-login">
 			<div class="container form-signin">
-				<p align="center"><h2> Viikkokisat</h2><br><img src="http://rolffarit.com/images/LOGOT/sitelogo.png" alt="Rolffarit" />
-				</p>
+				<h2> Viikkokisat<br><br><img src="http://rolffarit.com/images/LOGOT/sitelogo.png" alt="Rolffarit" /></h2>
+				
 
 <?php
 	$msg = '';
@@ -132,7 +132,10 @@ if ((isset($_SESSION['username']) &&  $_SESSION['username'] != '')) {
 						</div>														
 					<button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Login <i class="fa fa-sign-in"></i></button>
 				</form>
-			<p align="center"> Click here to clean <a href="pages/logout.php" tite="Logout">Session.</p>
+			<p align="center"> Click here to clean <a href="pages/logout.php" tite="Logout">Session.</a>
+			<br>
+			Rolffarit 2016</p>
+			
 		</div> 
 	</div>
 </body>

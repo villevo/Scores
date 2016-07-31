@@ -1,3 +1,10 @@
+<script type="text/javascript">
+    $(window).load(function(){
+        $('#OK_modal').modal('show');
+    });
+</script>		
+
+
 <?php 
 //user auth
 
@@ -12,6 +19,8 @@ $time1 = microtime(true);
 
 require_once '../data/config.php';
 
+// $error-muuttujalla lasketaan tämän sivun suorittamisessa tapahtuneet virheet yhteen ja näytetään lopussa jos on tarpeen
+$error = 0;
 
 //varmistetaan että kierros ja rata on valittu.
 echo "
@@ -32,6 +41,7 @@ echo "
 //jos hylätty score niin ERROR,DIE ja ohjeet palata tulosten syöttöön.
 $count = 0;
 $nocount = 0;
+$dnf_count = 0;
 	foreach($_POST['id'] as $pid){
 					$score = $_POST["score_$pid"];
 								if ($score < 1){
@@ -39,8 +49,11 @@ $nocount = 0;
 								}
 								
 								
-								if ($score >  "20" and $score < "200") {
+								if ($score >  "20" and $score < "200" OR $score == 999) {
 									$count = $count +1;
+									if ($score == 999){
+										$dnf_count = $dnf_count +1;
+									}
 								}	
 								else {
 									$nocount = $nocount +1;
@@ -49,24 +62,25 @@ $nocount = 0;
 	}
 	
 	echo "<b>Syötettyjen scorejen kappalemäärät:</b><br>
-	      <span class='ok_score'>Hyväksytyt scoret: $count kpl</span><br>
+	      <span class='ok_score'>Hyväksytyt: $count kpl</span><span class='dnf_score'>Denffaajat: $dnf_count kpl</span>  <span class='no_score'>Hylätyt: $nocount kpl</span><br>  
 		  ";
 		  
 	if ($nocount > "0"){
-			echo "<span class='err_score'><br>Hylätyt Scoret: $nocount kpl<br> <br>";
-		    die("ERROR: Vituiks meni, Joku annettu score on  (20 tai alle 20) tai yli 200. <br>Paina selaimen takaisin nappia ja tarkista scoret</span> ");
+		    die(" <span class='err_score'> ERROR: Vituiks meni, Joku annettu score ei ole hyväksytyissä rajoissa... 20-200 scoret hyväksytään. <br>Paina selaimen takaisin nappia ja tarkista scoret</span> ");
 			} 
 			else {
-				echo " <span class='ok_score'>ei hylättyjä scoreja, jatketaan....</span>";
+				echo " <br><span class='ok_score'>ei hylättyjä scoreja, jatketaan....</span>";
 			}
 	if ($count == 0) {
-		die("<span class='err_score'><br>ERROR: Vituiks män, ei lomakkeen kautta saatuja pelaaja tietoja..</span>");
+		die("<span class='err_score'><br>ERROR: Vituiks män... ei hyväksyttyjä scoreja...</span>");
 	}		
 
 		  
-echo "</div>
+echo "
+<hr>
+</div>
 <div id='loading'>
- 	<img src='../images/loadinganimation.gif' style='width: 25px;'> Tietoja käsitellään...
+ 	<img src='../images/loadinganimation.gif' style='width: 50px;'> Tietoja käsitellään, odota rauhassa....
 </div>
 ";
 
@@ -98,10 +112,8 @@ GROUP BY
 kisakone_Course.Name")))[0];	
 
 	$course_hole1_id = array_values(mysqli_fetch_array($link->query("SELECT id FROM kisakone_Hole WHERE kisakone_Hole.Course = $course_id and HoleNumber = 1 limit 1" )))[0];
-
 	$round_starttime = array_values(mysqli_fetch_array($link->query("SELECT kisakone_Round.StartTime FROM  kisakone_Round WHERE kisakone_Round.id = $round")))[0];
-	
-	$event_id = array_values(mysqli_fetch_array($link->query("SELECT kisakone_Event.id FROM kisakone_Event , kisakone_Round WHERE kisakone_Round.Event = kisakone_Event.id AND kisakone_Round.id = $round")))[0];
+		$event_id = array_values(mysqli_fetch_array($link->query("SELECT kisakone_Event.id FROM kisakone_Event , kisakone_Round WHERE kisakone_Round.Event = kisakone_Event.id AND kisakone_Round.id = $round")))[0];
 	$event_name = array_values(mysqli_fetch_array($link->query("SELECT kisakone_Event.name FROM kisakone_Event , kisakone_Round WHERE kisakone_Round.Event = kisakone_Event.id AND kisakone_Round.id = $round")))[0];
 	$course_rating = array_values(mysqli_fetch_array($link->query("SELECT coalesce(kisakone_CourseRating.Rating, 0) AS rating FROM kisakone_Course LEFT JOIN kisakone_CourseRating ON kisakone_Course.id = kisakone_CourseRating.Course where kisakone_Course.id = $course_id")))[0];
 	$course_slope = array_values(mysqli_fetch_array($link->query("SELECT coalesce(kisakone_CourseRating.Slope, 0) AS slope FROM kisakone_Course LEFT JOIN kisakone_CourseRating ON kisakone_Course.id = kisakone_CourseRating.Course where kisakone_Course.id = $course_id")))[0];
@@ -109,13 +121,33 @@ kisakone_Course.Name")))[0];
 
 //Käytetään lopussa kilpailun sulku aikana!
 $fixed_time = strtotime($round_starttime) + 3*60*60;
-
 $round_endtime = date('Y-m-d H:i', $fixed_time);
 
+	echo " <div class= 'code-show'>
+				<b>lomakkeen kautta saadut kilpailu-tiedot, suppeasti:</b> 
+				<ul>
+					<li>Pelattavat luokat $echo_classe_enabled</li>
+					<li>Kilpailun nimi:$event_name </li>
+					<li>Kierroksen lähtöaika: $round_starttime  ->  $round_endtime </li>					
+					<ul>
+						<li>Radan nimi $course</li>
+						<li>Radan par: $course_par</li>		
+						<li><b>radan tasoitus tiedot</b></li>
+						<ul>
+							<li>Radan rating: $course_rating</li>
+							<li>Radan slope: $course_slope</li>
+						</ul>
+				</ul>
+			</div>	
+		";
 
+		
+		//Tämä DIVi ja BUTTON piilottaa tiedot napin alle
+		
+		echo "
+	<button class='btn btn-primary btn-md btn-block'>Näytä/piilota yksityiskohtaiset tiedot</button> 
+		<div class='code'>";
 
-
-	
 	echo " <div class= 'code-show'>
 				<b>lomakkeen kautta saadut kilpailu-tiedot:</b> 
 				<ul>
@@ -143,11 +175,12 @@ $round_endtime = date('Y-m-d H:i', $fixed_time);
 		";
 
 
-		
+
 		//kaiken vanhan tiedon poisto kannasta:
+		
 echo "
 
-<div class='code-show'><h3><b>poistetaan  kilpailun vanhat tiedot:</b><br></h3>";
+	<div class='code-show'><h3><b>poistetaan  kilpailun vanhat tiedot:</b><br></h3>";
 	
 	
 	
@@ -162,6 +195,7 @@ kisakone_RoundResult.Round = $round";
 				echo "Väylätuloset, ";
 			} else {
 				echo "Error deleting record: " . $link->error;
+				$error += 1;
 			}
 			
 	$sql = "
@@ -176,6 +210,7 @@ kisakone_RoundResult.Round = $round
 				echo "tasoituskierrokset, ";
 			} else {
 				echo "Error deleting record: " . $link->error;
+				$error += 1;
 			}			
 			
 			
@@ -184,6 +219,7 @@ $sql = "DELETE FROM kisakone_RoundResult WHERE kisakone_RoundResult.Round = $rou
 				echo "kierrostulokset, ";
 			} else {
 				echo "Error deleting record: " . $link->error;
+				$error += 1;
 			}
 			
 				$sql = "DELETE FROM kisakone_Participation WHERE kisakone_Participation.Event = $event_id";
@@ -191,6 +227,7 @@ $sql = "DELETE FROM kisakone_RoundResult WHERE kisakone_RoundResult.Round = $rou
 				echo "ilmoittautumiset, ";
 			} else {
 				echo "Error deleting record: " . $link->error;
+				$error += 1;
 			}
 			
 			
@@ -205,24 +242,27 @@ kisakone_Section.Round = $round
 				echo "Starting_order,  ";
 			} else {
 				echo "Error deleting record: " . $link->error;
+				$error += 1;
 			}
 $sql = "DELETE FROM kisakone_Section WHERE kisakone_Section.Round = $round";
 			if ($link->query($sql) === TRUE) {
 				echo "lohkot, ";
 			} else {
 				echo "Error deleting record: " . $link->error;
+				$error += 1;
 			}
 $sql = "DELETE FROM kisakone_ClassInEvent WHERE kisakone_ClassInEvent.Event = $event_id";
 			if ($link->query($sql) === TRUE) {
-				echo "kilpailun luokat, ";
+				echo "kilpailun luokat. ";
 			} else {
 				echo "Error deleting record: " . $link->error;
+				$error += 1;
 			}
 
 
 //------------  VANHAT KILPAILU TIEDOT POISTETTU TIETOKANNASTA, ALETAAN LISÄÄMÄÄN UUTTA TIETOA ----------
-echo "<button class='btn btn-primary btn-xs btn-block'>Näytä/piilota yksityiskohtaiset tiedot</button>";
-echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><br></h3>------------------------------------------------------------------------------------------------------<br>Kilpailua koskevien tietojen lisääminen:";
+
+echo "<h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><br></h3>------------------------------------------------------------------------------------------------------<br>Kilpailua koskevien tietojen lisääminen:";
 
 
 
@@ -233,6 +273,7 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 				echo " <ul><li>rata lisätty kilpailulle: $course_id</li>";
 			} else{
 				echo "ERROR: Rataa ei voitu lisätä kilpailulle. $rata. " . mysqli_error($link);
+				$error += 1;
 			}
 //lohko
 	
@@ -244,6 +285,7 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 					echo "<li>Lohko tehty onnistuneesti Lohkon ID: $section_id </li>";
 				} else {
 					echo "ERROR: Lohkoa ei voitu lisätä kilpailulle $lohko. <br>" . mysqli_error($link);
+					$error += 1;
 				}
 
 //pelattavat luokat
@@ -256,6 +298,7 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 					echo "<li>MPO-luokkalisätty, classinevent_id: $mpo_class_id </li>";
 				} else {
 					echo "ERROR: Luokkaa ei voitu lisätä kilpailulle $mpo. <br>" . mysqli_error($link);
+					$error += 1;
 
 				}
 			//Fpo loukan lisääminen, jos lomakkeesta valittu FPO
@@ -269,6 +312,7 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 					echo "<li>FPO-luokkalisätty, classinevent_id: $fpo_class_id </li></ul><br>";
 				} else {
 					echo "ERROR: Luokkaa ei voitu lisätä kilpailulle $fpo. <br>" . mysqli_error($link);
+					$error += 1;
 
 				}	
 
@@ -285,7 +329,7 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 					$score = $_POST["score_$pid"];
 								
 						// Hypätään yli kaikki pelaajat joiden score on alle 20 tai yli 200
-						if ($score <  "20" or $score > "200") {
+						if ($score <  "20" OR $score > "200" AND $score !=999) {
 						continue; }
 												
 						$result = "SELECT * FROM kisakone_Player,kisakone_User where player_id = $pid and kisakone_Player.player_id = kisakone_User.Player";
@@ -301,6 +345,16 @@ echo "<div class=code><h3><b>Aloitetaan tietojen lisääminen tietokantaan:</b><
 				}
 				else {
 					die("ei pelaajaa");
+					$error += 1;
+				}
+				
+				if ($score == 999){
+					$dnf = 1;
+					$completed = 0;
+				}
+				else {
+					$dnf = 0;
+					$completed = 1;
 				}
 
 echo "
@@ -317,6 +371,7 @@ echo "
 	<th>Sex</th>
 	<th>Club</th>
     <th>Score</th>
+	<th>DNF</th>
 
   </tr>
    <tr>
@@ -324,72 +379,52 @@ echo "
 	<td>$p_sex</td>
     <td>$p_club</td>
 	<td>$score</td>
+	<td>$dnf</td>
 
   </tr>
 </table>";
 
 							
 							
-	//pelaajan ilmoittautuminen kilpailuuun,miehet mpo- ja naiset fpo-luokkaan JOS FPO-valittu lomakkeesta, muuten kaikki pelaajat MPO. 
-	//	maksu maksetuksi valmiiksi.
-	//pelaajan clubin asetus iffaamalla.(jos clubia ei ole asetettu niin $p_club antaa tyhjän ja errori pukkaa sql-querystä)
+	//PELAAJAN ILMOITTAUTUMINEN KILPAILUUN:
+	//
+	// - Iffaillaan miehet $classinevent MPO = 21 ja naiset FPO = 22
+	// - Tehdään muuttujat seuran asettamiseen: $club_setting = clumni ja $club_setting2 = value.    ( Arvoja käytetään suoraan mysql insertissä $parti )
+
 if ($classes_fpo == 1){	
-	if($p_sex === "male")
-	{
-							if($p_club > 0 ){
-							$parti = "INSERT INTO kisakone_Participation (Player, Event, Classification, Approved,EventFeePaid,OverallResult,Club)
-												VALUES ($pid, $event_id, 21,1,NOW(),$score, $p_club)";
-							}
-							else{
-							$parti = "INSERT INTO kisakone_Participation (Player, Event, Classification, Approved,EventFeePaid,OverallResult)
-												VALUES ($pid, $event_id, 21,1,NOW(),$score)";	
-							}
-									
-							if(mysqli_query($link, $parti)){
-										$parti_id = $link->insert_id;
-							echo "<ul><li>Ilmoittautuminen id: $parti_id</li>
-										<li>Luokka MPO</li>";
-								} else{
-							echo "ERROR: Ilmoittautumista ei voitu lisätä pelaajalle pid = $pid $parti. " . mysqli_error($link);
-				}
+	if($p_sex === "male"){
+		$classinevent = 21;
 	}
-	else
-	{
-								if($p_club > 0 ){
-							$parti = "INSERT INTO kisakone_Participation (Player, Event, Classification, Approved,EventFeePaid,OverallResult,Club)
-												VALUES ($pid, $event_id, 22,1,NOW(),$score, $p_club)";
-							}
-							else{
-							$parti = "INSERT INTO kisakone_Participation (Player, Event, Classification, Approved,EventFeePaid,OverallResult)
-												VALUES ($pid, $event_id, 22,1,NOW(),$score)";	
-							}
-									
-							if(mysqli_query($link, $parti)){
-										$parti_id = $link->insert_id;
-							echo "<ul><li>Ilmoittautuminen id: $parti_id</li>
-										<li>Luokka FPO/li>";
-								} else{
-							echo "ERROR: Ilmoittautumista ei voitu lisätä pelaajalle pid = $pid $parti. " . mysqli_error($link);	
-							}
+	else {
+		$classinevent = 22;
 	}
-}else{ // Jos FPO-luokkaa ei ole valittu_ kaikki pelaajat MPO luokkaan:
-				if($p_club > 0 ){
-							$parti = "INSERT INTO kisakone_Participation (Player, Event, Classification, Approved,EventFeePaid,OverallResult,Club)
-												VALUES ($pid, $event_id, 21,1,NOW(),$score, $p_club)";
-							}
-							else{
-							$parti = "INSERT INTO kisakone_Participation (Player, Event, Classification, Approved,EventFeePaid,OverallResult)
-												VALUES ($pid, $event_id, 21,1,NOW(),$score)";	
-							}
-									
-							if(mysqli_query($link, $parti)){
-										$parti_id = $link->insert_id;
-							echo "<ul><li>Ilmoittautuminen id: $parti_id</li>
-										<li>Luokka MPO</li>";
-								} else{
-							echo "ERROR: Ilmoittautumista ei voitu lisätä pelaajalle pid = $pid $parti. " . mysqli_error($link);
-				}	
+}
+else {
+	$classinevent = 21;
 }	
+
+//Tehdään muuttujat Clubin asettamiseen, $club_setting = clumni ja $club_setting2 = value
+	if($p_club > 0 ){
+		$club_setting = ", Club";
+		 $club_setting2 =", $p_club ";
+	}
+	else {
+		$club_setting = "";
+		$club_setting2 = "";
+	}
+
+							$parti = "INSERT INTO kisakone_Participation (Player, Event, Classification, Approved,EventFeePaid,OverallResult, DidNotFinish $club_setting)
+												VALUES ($pid, $event_id, $classinevent,1,NOW(),$score,$dnf $club_setting2)";
+										
+							if(mysqli_query($link, $parti)){
+										$parti_id = $link->insert_id;
+							echo "<ul><li>Ilmoittautuminen id: $parti_id</li>
+										<li>Luokka $classinevent</li>";
+								} else{
+							echo "ERROR: Ilmoittautumista ei voitu lisätä pelaajalle pid = $pid $parti. " . mysqli_error($link);
+							$error += 1;
+				}
+	
 		//lähtöjärjestys kierrokselle	
 						
 							$starting_order = "INSERT INTO kisakone_StartingOrder (Player, Section, StartingTime, StartingHole, GroupNumber)
@@ -399,32 +434,40 @@ if ($classes_fpo == 1){
 							echo "<li>lähtöjärjestys id:  $starting_order_id</li>";
 								} else{
 							echo "ERROR: Could not able to execute $starting_order. " . mysqli_error($link);
+							$error += 1;
 							} 
 
-				
+							if ($score > 1 and $score !=999){
 							$score_plusminus = $score - $course_par;
-
+							}
+							else {
+							$score_plusminus = 0;								
+							}
 
 	// ITSE SCOREN LAITTAMINEN TIETOKANTAAN:
 	
-								$insert_score = "INSERT INTO kisakone_RoundResult (Round, Player,Result,SuddenDeath, Completed, PlusMinus, LastUpdated, CumulativePlusminus, CumulativeTotal)
-															VALUES	($round, $pid, $score, 0, 1, $score_plusminus, NOW(), $score, $score)";
+	
+
+								$insert_score = "INSERT INTO kisakone_RoundResult (Round, Player,Result,SuddenDeath, Completed, DidNotFinish, PlusMinus, LastUpdated, CumulativePlusminus, CumulativeTotal)
+															VALUES	($round, $pid, $score, 0, $completed, $dnf, $score_plusminus, NOW(), $score, $score)";
 								if(mysqli_query($link, $insert_score)){
 									$rr_id = $link->insert_id;
 							echo "	<li>Lisätty tulos: $score </b></li>
 									<li>kierrostuloksen id:  $rr_id</li>
 									";
 							//Lisätään tulos vielä holeresulttiin ni näyttää nätiltä..
-										$insert_hole_result ="INSERT INTO kisakone_HoleResult (Hole, RoundResult, Player, Result)
-															VALUES	($course_hole1_id, $rr_id, $pid, $score)";
+								//DNF FIX
+								}
+										$insert_hole_result ="INSERT INTO kisakone_HoleResult (Hole, RoundResult, Player, Result, DidNotShow)
+															VALUES	($course_hole1_id, $rr_id, $pid, $score, $dnf)";
 										if(mysqli_query($link, $insert_hole_result)){
 											$hr_id = $link->insert_id;
 											echo "	<li>HoleResult lisätty</li>
 													<li>hr_id:  $hr_id</li>
 													</ul>";
-										}
 										} else{
 											echo "ERROR: Kierrostulosta ei voitu lisätä PID = $pid score = $insert_hole_result. " . mysqli_error($link);
+											$error += 1;
 										}
 							
 							
@@ -444,7 +487,7 @@ if ($classes_fpo == 1){
 				
 				
 				
-//  ----------------------------------  RAAKATULOS LEADERBOARD  ALKAA printti oikealle----------------------------
+//  ----------------------------------  RAAKATULOS LEADERBOARD  ALKAA printti vasemmalle----------------------------
 //MPO-standings:
 
 $mpo_scoret = "SELECT
@@ -452,6 +495,8 @@ kisakone_RoundResult.Result as score,
 kisakone_Player.lastname as lastname,
 kisakone_RoundResult.Player as p_id,
 kisakone_RoundResult.Round as r_id,
+kisakone_RoundResult.Round as r_id,
+kisakone_RoundResult.DidNotFinish as r_dnf,
 kisakone_Event.id as e_id
 from
 kisakone_RoundResult,
@@ -473,7 +518,8 @@ and
 kisakone_Participation.Player = kisakone_Player.player_id
 and
 kisakone_Participation.Classification = 21
-order by
+ORDER BY
+kisakone_RoundResult.DidNotFinish,
 kisakone_RoundResult.Result
 
 
@@ -489,6 +535,7 @@ if( mysqli_query($link, $mpo_scoret)){
 				<h3>MPO-leaderboard:</h3>";
 			} else{
 				echo "ERROR: Could not able to execute $mpo_scoret. " . mysqli_error($link);
+				$error += 1;
 			}
 			
 
@@ -518,16 +565,23 @@ $count_mpo = mysqli_num_rows($mpo_sorted_scores);
         while($row = $mpo_sorted_scores->fetch_assoc()){
 					 $e = $row['e_id'] ;
 					 $p = $row['p_id'];
-				
+					 $r = $row['r_id'];
+	
 			
 			//real standing
 			$rs = $rs + 1;
 			if($last < $row['score']){
 				//fixed standing:
-				if($rs >0){ //iffaus koska jos 1.sija on jaettu niin s=rs=0
+				
+				//iffaus koska jos 1.sija on jaettu niin s=rs=0
+				if($rs >0){ 
 				$s = $rs;
 				}
 			}
+			$last = $row['score'];
+			
+
+				
 					echo '
 						<tr>
 							<td>'.$s.'</td>
@@ -538,16 +592,27 @@ $count_mpo = mysqli_num_rows($mpo_sorted_scores);
 						</tr>';
 
   			
-			 $last = $row['score'];
+			 
 		
 			//pelaajan ilmoittautumistiedon päivitys standingillä:
 							$mpo_jarjestys = "UPDATE kisakone_Participation set Standing= $s where player = $p and event = $e";		
 							if(mysqli_query($link, $mpo_jarjestys)){
-								
-							};
+							}else{
+								echo "ERROR: Could not able to execute $mpo_jarjestys. " . mysqli_error($link);
+								$error += 1;
+								}
 							
+							if($row['r_dnf'] == 1){
+							$dnf_leaderboard_score_fix = "UPDATE kisakone_RoundResult set Result = 0 where player = $p and Round =  $r";		
+							if(mysqli_query($link, $dnf_leaderboard_score_fix)){
+							}else{
+								echo "ERROR: Could not able to execute $dnf_leaderboard_score_fix. " . mysqli_error($link);
+								$error += 1;
+							}
+							}
 							
 }
+
 
 echo " 
 		</table>
@@ -563,8 +628,10 @@ kisakone_RoundResult.Result as score,
 kisakone_Player.lastname as lastname,
 kisakone_RoundResult.Player as p_id,
 kisakone_RoundResult.Round as r_id,
+kisakone_RoundResult.Round as r_id,
+kisakone_RoundResult.DidNotFinish as r_dnf,
 kisakone_Event.id as e_id
-FROM
+from
 kisakone_RoundResult,
 kisakone_Round,
 kisakone_Event,
@@ -584,7 +651,8 @@ and
 kisakone_Participation.Player = kisakone_Player.player_id
 and
 kisakone_Participation.Classification = 22
-order by
+ORDER BY
+kisakone_RoundResult.DidNotFinish,
 kisakone_RoundResult.Result
 
 
@@ -595,6 +663,7 @@ if( mysqli_query($link, $fpo_scoret)){
 				<h3>FPO-Leaderboard:</h3>";
 			} else{
 				echo "ERROR: Could not able to execute $fpo_scoret. " . mysqli_error($link);
+				$error += 1;
 			}
 			
 
@@ -624,34 +693,47 @@ $count_fpo = mysqli_num_rows($fpo_sorted_scores);
         while($row = $fpo_sorted_scores->fetch_assoc()){
 				 $e = $row['e_id'] ;
 					 $p = $row['p_id'];
+					 $r = $row['r_id'];
 				
-			
 			//real standing
-			$rs = $rs + 1;
+			$rs = $rs + 1; 
 			if($last < $row['score']){
 				//fixed standing:
-				if($rs >0){ //iffaus koska jos 1.sija on jaettu niin s=rs=0
+				
+				//iffaus koska jos 1.sija on jaettu niin s=rs=0
+				if($rs >0){ 
 				$s = $rs;
 				}
 			}
+			$last = $row['score'];
+			
+
+				
 					echo '
 						<tr>
 							<td>'.$s.'</td>
-							<td>'.$row['lastname'].'</td>
 							<td>'.$row['score'].'</td>	
+							<td>'.$row['lastname'].'</td>
 							<td>'.$row['p_id'].'</td>
 
 						</tr>';
 
-  			
-			 $last = $row['score'];
-		
 			//pelaajan ilmoittautumistiedon päivitys standingillä:
-							$fpo_jarjestys = "UPDATE kisakone_Participation set Standing= $s where player = $p and Event = $e";		
+							$fpo_jarjestys = "UPDATE kisakone_Participation set Standing= $s where player = $p and event = $e";		
 							if(mysqli_query($link, $fpo_jarjestys)){
-
-							};
+							}else{
+								echo "ERROR: Could not able to execute $fpo_jarjestys. " . mysqli_error($link);
+								$error += 1;
+								}
 							
+							if($row['r_dnf'] == 1){
+							$dnf_leaderboard_score_fix = "UPDATE kisakone_RoundResult set Result = 0 where player = $p and Round =  $r";		
+							if(mysqli_query($link, $dnf_leaderboard_score_fix)){
+							}else{
+								echo "ERROR: Could not able to execute $dnf_leaderboard_score_fix. " . mysqli_error($link);
+								$error += 1;
+							}
+							}
 							
 }
 
@@ -684,11 +766,12 @@ echo '
 	$close_event = "UPDATE kisakone_Event SET ResultsLocked = '$round_endtime' WHERE id = $event_id";		
 		if(mysqli_query($link, $close_event)){
 				echo "
-					      <span class='ok_score'>Kierros suljettu onnistuneesti.</span><br>
+					      <span class='ok_span'>Kierros suljettu onnistuneesti.</span><br>
 				
 			";
 			} else{
 				echo "ERROR: Could not able to execute $close_event. " . mysqli_error($link);
+				$error += 1;
 			}			
 			
 			// __ -- ** HCP ** -- __
@@ -712,11 +795,9 @@ echo '
 	kisakone_Round.id= $round"
 	) or die(mysql_error());
 
-			echo "<div class='code-show'>
-			<h3>Kierrokselta tulevat tasoitukset:</h3>
-			Tasoituskierrokset laskettu:
-			";
+
 		$hcp_counter = 0;
+		$hcp_dnf_counter = 0;
 		
       foreach ($result as $row) {
 
@@ -727,8 +808,11 @@ echo '
 		$p_fist = $row['firstname'];
 		$p_last = $row['lastname'];
 		$score = $row['Result'];
-
-       	if ($dnf == 1) continue; 						//poikki jos dnf
+	//poikki jos dnf
+       	if ($dnf == 1) {
+			$hcp_dnf_counter +=1;
+			continue;
+		}		
 				
 		$result2 = mysqli_query($link,"select Rating,Slope from kisakone_CourseRating where Course = $course limit 1");
 	
@@ -754,27 +838,101 @@ echo '
 							
 	   }
 
-} //HCP foreach loppuu...
-echo "
-		$hcp_counter pelaajalle.
+} //HCP foreach loppuu... kaikki tarvittava tieto on nyt kannassa, loppu koodi on vain visuaalista infoa käyttäjälle!
+echo "	<div class='code-show'>
+			<h3>Kierrokselta tulevat tasoitukset:</h3>
+			Tasoituskierrokset laskettu: $hcp_counter kpl. <br>
+			ohitettu denffanneet pelaajat $hcp_dnf_counter kpl.
 		</div>
-		<br>
+		
+				<br>
 		<div class='well'>
+		";
+		if($error == 0 ){
+		echo "
 						<div class='leaderboards'>
 							<div>
 								<img src='../images/peukku.png' style='width: 100px;'>
 							</div>
 							<div>
-								Jos virheitä ei näy niin tulokset lisätty onnistuneesti.
-								<a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' target='_new' id = 'link_kk'>
-								Suoralinkki leaderboardiin.</a>
-								<br>
-								<br>
-								Tarkista leaderboard-kisakoneen puolelta,<u> JOS</u> virheitä niin paina takaisin nappia niin pääset korjaamaan tuloksia samantien. 
-							</div>
+								<br><a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' target='_new' id = 'link_kk'>
+								Suoralinkki kisakoneen leaderboardiin.</a>
+								</div>
+
 						</div>
-					
-				</div>	";
+						 <span class='ok_span'>Ei virheitä.</span>
+				<u> JOS </u>tuloksissa on  virheitä niin paina takaisin nappia niin pääset korjaamaan tuloksia samantien tai aloita tulosten syöttö alusta ja korjaa tulokset	
+		</div>	";
+		}else{
+					echo "
+						<span class='err_score'> VIRHEITÄ HAVAITTU $error kpl, tarkista yksityiskohtaiset tiedot</span>
+						<br><a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' target='_new' id = 'link_kk'>Suoralinkki leaderboardiin.</a>
+						</div>";
+			
+		}
+			
+echo '
+  <!-- Modal -->
+  <div class="modal fade" id="OK_modal" role="dialog">
+    <div class="modal-dialog modal-sm">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  
+		  ';
+		  
+//OK-modal boxin tekstit ja aika laskurin pysäytys:
+$time2 = microtime(true);
+$runtime = $time2 - $time1; //value in seconds
+
+		  
+if($error == 0 ){	
+	echo "
+          <h4 class='modal-title'>Tulokset lisätty onnistuneesti!</h4>
+        </div>
+        <div class='modal-body'>
+			<h2><img src='../images/peukku.png' style='width: 100px;'>
+			<br>
+			<a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' target='_new' id = 'link_kk'>
+								Suoralinkki kisakoneen leaderboardiin.</a></h2>
+								<br>
+						 <span class='ok_span'>Ei virheitä.</span>
+				<u> JOS</u>  tuloksissa on  virheitä niin paina takaisin nappia niin pääset korjaamaan tuloksia samantien tai aloita tulosten syöttö alusta ja korjaa tulokset.
+						<br><br>
+						<div class='well'>
+						tulosten laskentaan käytetty aika: $runtime sekuntia				
+						</div>
+			
+			";
+			}else{
+				echo "
+          <h4 class='modal-title'>Tapahtui virhe!</h4>
+        </div>
+        <div class='modal-body'>
+			<h2><i class='fa fa-exclamation-triangle fa-4x' aria-hidden='true' style='color:red;'></i><br>VIRHE!</h2>
+			<br>
+						<span class='err_score'> VIRHEITÄ HAVAITTU $error kpl, tarkista yksityiskohtaiset tiedot ja ilmoita ylläpidolle asiasta. yritä syöttää tulokset uudelleen.</span>
+						<br><a href = '../../kisakone/kilpailu/$event_id/katso/leaderboard' target='_new' id = 'link_kk'>Suoralinkki leaderboardiin.</a>
+						<br><br>
+						tulosten laskentaan käytetty aika: $runtime sekuntia
+								
+			";	
+			}
+
+		  echo '
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Sulje</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+';
+
+
 
 
 					
@@ -783,9 +941,9 @@ echo "
  
  
  //aika-laskuri
-$time2 = microtime(true);
+
 	echo '<div class= "well">';
-	echo '	tulosten laskentaan käytetty aika: ' . ($time2 - $time1) . ' sekuntia' ;//value in seconds
+	echo "	Tulosten laskentaan käytetty aika: $runtime sekuntia" ;
 	echo "</div></div>";
 mysqli_close($link);
 						

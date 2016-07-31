@@ -2,15 +2,14 @@ body {
     padding-top: 0px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 	
 		
-		background-image: url(../images/tausta.jpg); 
+		/*background-image: url(../images/tausta.jpg); 
 		-webkit-background-size: cover;
 		-moz-background-size: cover;
 		-o-background-size: cover;
 		background-size: cover;
 		background-repeat: no-repeat;
-		background-attachment: fixed;
-		  
-//		    background-image: url(../images/footer_lodyas.png);  
+		background-attachment: fixed;*/
+		background-image: url(../images/footer_lodyas.png);  
 }
 .container-inner {
     background-color: #9d9d9d;
@@ -288,11 +287,43 @@ p#pelaajia {
 span.ok_score {
     background-color: green;
     color: white;
-    padding: 2px;
+    padding: 5px;
+    margin: 7px;
     font-size: medium;
     border-radius: 10px;
     font-size: 14px;
 }
+
+span.ok_span {
+    background-color: green;
+    color: white;
+    padding: 2px;
+    margin: 7px;
+    font-size: medium;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+span.dnf_score {
+    background-color: #362cf1;
+    color: white;
+    padding: 5px;
+    margin: 7px;
+    font-size: medium;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+span.no_score {
+    background-color: #fb0000;
+    color: white;
+    padding: 5px;
+    margin: 7px;
+    font-size: medium;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
 
 
 span.err_score {

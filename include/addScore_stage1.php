@@ -18,8 +18,13 @@ if($link == true){
   
   <div class="form">
   
+ <div class="alert alert-success" role="alert">
+  Päivitys 30.8.2016: Lisätty DNF-tiedon käsittely: laita Denffaajalle tulokseksi <b><u>999</b></u>, lisäksi muokattu taustakuvaa ja selkeytetty "data-sivua" tulostensyötön jälkeen. <br>-V
+</div>
 
- <i> Kilpailut</i>-listassa näkyy kaikki auki olevat viikkokisat JA alle 2viikkoa vanhat viikkokisat tulosten korjausta varten.
+ <i> Kilpailut</i>-listassa näkyy kaikki auki olevat viikkokisat JA alle 2viikkoa vanhat viikkokisat tulosten korjauksia varten nämä kisat on merkittu etuliitteellä !*!*!.
+ 
+
   <br>
   <br>
  	<label for='round' class="col-sm-3 control-label">Kilpailu:</label>
@@ -35,7 +40,7 @@ if($link == true){
 								$result_lock = "";
 							}
 							else{
-								$result_lock = "!***";
+								$result_lock = "!*!*!";
 							}
 							
 							echo '
